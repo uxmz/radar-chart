@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Radar Chart</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .chart-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        canvas {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .controls {
+            margin-top: 15px;
+            text-align: center;
+        }
+        button {
+            margin: 0 5px;
+            padding: 8px 16px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+    </style>
+    <script src="radar-chart.js"></script>
+</head>
+<body>
+    <div class="chart-container">
+        <h2>Skills Assessment</h2>
+        <canvas id="radarChart" width="400" height="400"></canvas>
+        <div class="controls">
+            <button onclick="updateData(0)">Dataset 1</button>
+            <button onclick="updateData(1)">Dataset 2</button>
+            <button onclick="updateData(2)">Dataset 3</button>
+            <button onclick="toggleLevels()">Toggle Circles</button>
+            <br><br>
+            <label>Circle Levels: </label>
+            <button onclick="setLevels(1)">1</button>
+            <button onclick="setLevels(3)">3</button>
+            <button onclick="setLevels(5)">5</button>
+            <button onclick="setLevels(8)">8</button>
+            <button onclick="setLevels(10)">10</button>
+        </div>
+    </div>
+
+    <script>        
+        // Sample datasets with color options
+        var datasets = [
+            {
+                labels: ['JavaScript', 'Python', 'React', 'Node.js', 'CSS', 'HTML'],
+                values: [8, 6, 9, 7, 8, 9],
+                colors: {
+                    fillColor: 'rgba(54, 162, 235, 0.2)',
+                    lineColor: 'rgba(54, 162, 235, 1)',
+                    pointColor: 'rgba(54, 162, 235, 1)'
+                }
+            },
+            {
+                labels: ['JavaScript', 'Python', 'React', 'Node.js', 'CSS', 'HTML'],
+                values: [7, 9, 6, 8, 6, 8],
+                colors: {
+                    fillColor: 'rgba(255, 99, 132, 0.2)',
+                    lineColor: 'rgba(255, 99, 132, 1)',
+                    pointColor: 'rgba(255, 99, 132, 1)'
+                }
+            },
+            {
+                labels: ['JavaScript', 'Python', 'React', 'Node.js', 'CSS', 'HTML'],
+                values: [9, 5, 8, 6, 9, 7],
+                colors: {
+                    fillColor: 'rgba(75, 192, 192, 0.2)',
+                    lineColor: 'rgba(75, 192, 192, 1)',
+                    pointColor: 'rgba(75, 192, 192, 1)'
+                }
+            }
+        ];
+        
+        // Initialize chart
+        var chart = new RadarChart('radarChart', datasets[0]);
+        
+        // Function to update data
+        function updateData(index) {
+            chart.updateData(datasets[index]);
+        }
+        
+        // Function to toggle level circles
+        function toggleLevels() {
+            chart.options.showLevels = !chart.options.showLevels;
+            chart.draw();
+        }
+        
+        // Function to set number of level circles
+        function setLevels(numLevels) {
+            chart.options.levels = numLevels;
+            chart.options.showLevels = true; // Ensure they're visible when setting
+            chart.draw();
+        }
+    </script>
+</body>
+</html>
