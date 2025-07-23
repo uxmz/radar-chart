@@ -225,6 +225,8 @@
         this.tooltip.style.display = 'none';
         this.tooltip.style.visibility = 'hidden';
         this.tooltip.style.opacity = '0';
+        this.tooltip.style.left = '';
+        this.tooltip.style.top = '';
     };
 
     RadarChart.prototype.draw = function () {
