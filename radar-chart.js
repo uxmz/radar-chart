@@ -43,6 +43,7 @@
             pointColor: 'rgba(54, 162, 235, 1)',
             labelColor: '#333',
             fontSize: Math.max(12, Math.min(16, canvasWidth / 30)), // Responsive font size
+            fontWeight: 'bold', // Font weight for labels (normal, bold, 100-900)
             enableTooltips: true,  // Enable/disable tooltips
             tooltipSelector: '#tooltip', // CSS selector for tooltip element
             tooltipTemplate: function (data) { // Custom tooltip content
@@ -67,6 +68,9 @@
             }
             if (!options.fontSize) {
                 this.options.fontSize = Math.max(12, Math.min(16, canvasWidth / 30));
+            }
+            if (!options.fontWeight) {
+                this.options.fontWeight = 'bold';
             }
         }
 
@@ -276,10 +280,11 @@
         var radius = this.options.radius;
         var labelColor = this.options.labelColor;
         var fontSize = this.options.fontSize;
+        var fontWeight = this.options.fontWeight;
         var angleStep = (2 * Math.PI) / this.data.labels.length;
 
         this.ctx.fillStyle = labelColor;
-        this.ctx.font = fontSize + 'px Arial';
+        this.ctx.font = fontWeight + ' ' + fontSize + 'px Arial';
         this.ctx.textAlign = 'center';
         this.ctx.textBaseline = 'middle';
 
