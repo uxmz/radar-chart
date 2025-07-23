@@ -24,10 +24,17 @@
         this.data = data;
         this.dataPoints = []; // Store data point positions for hover detection
 
-        // Default options
+        // Get actual canvas dimensions
+        var canvasWidth = this.canvas.width;
+        var canvasHeight = this.canvas.height;
+        var centerX = canvasWidth / 2;
+        var centerY = canvasHeight / 2;
+        var maxRadius = Math.min(canvasWidth, canvasHeight) / 2 - 60; // Leave space for labels
+
+        // Default options that adapt to canvas size
         this.options = {
-            center: { x: 200, y: 200 },
-            radius: 150,
+            center: { x: centerX, y: centerY },
+            radius: maxRadius,
             levels: 5,
             showLevels: true,  // Set to false to hide inner circles
             strokeColor: '#999',
@@ -35,7 +42,7 @@
             lineColor: 'rgba(54, 162, 235, 1)',
             pointColor: 'rgba(54, 162, 235, 1)',
             labelColor: '#333',
-            fontSize: 14,
+            fontSize: Math.max(12, Math.min(16, canvasWidth / 30)), // Responsive font size
             enableTooltips: true,  // Enable/disable tooltips
             tooltipSelector: '#tooltip', // CSS selector for tooltip element
             tooltipTemplate: function (data) { // Custom tooltip content
@@ -43,12 +50,23 @@
             }
         };
 
-        // Merge options
+        // Merge user options (but don't override responsive calculations unless explicitly set)
         if (options) {
             for (var key in options) {
                 if (options.hasOwnProperty(key)) {
                     this.options[key] = options[key];
                 }
+            }
+
+            // If user didn't specify center or radius, keep our responsive calculations
+            if (!options.center) {
+                this.options.center = { x: centerX, y: centerY };
+            }
+            if (!options.radius) {
+                this.options.radius = maxRadius;
+            }
+            if (!options.fontSize) {
+                this.options.fontSize = Math.max(12, Math.min(16, canvasWidth / 30));
             }
         }
 
@@ -153,9 +171,9 @@
         var tooltipWidth = tooltipRect.width;
         var tooltipHeight = tooltipRect.height;
 
-        // Get canvas container dimensions
-        var canvasWidth = this.canvas.width;
-        var canvasHeight = this.canvas.height;
+        // Get actual canvas dimensions
+        var canvasWidth = this.canvas.clientWidth || this.canvas.width;
+        var canvasHeight = this.canvas.clientHeight || this.canvas.height;
 
         // Calculate initial position with offset
         var offsetX = 12;
@@ -207,8 +225,6 @@
         this.tooltip.style.display = 'none';
         this.tooltip.style.visibility = 'hidden';
         this.tooltip.style.opacity = '0';
-        this.tooltip.style.left = '';
-        this.tooltip.style.top = '';
     };
 
     RadarChart.prototype.draw = function () {
