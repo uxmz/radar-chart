@@ -1,7 +1,7 @@
 /*!
  * Version: 1.0
  * Started: 22-07-2025
- * Updated: 23-07-2025
+ * Updated: 18-09-2025
  *
  */
 (function (root, factory) {
@@ -94,13 +94,16 @@
         // Ensure tooltip starts hidden
         this.tooltip.style.display = 'none';
 
-        this.canvas.addEventListener('mousemove', function (e) {
+        // Store bound functions for proper cleanup
+        this.boundHandleMouseMove = function (e) {
             self.handleMouseMove(e);
-        });
-
-        this.canvas.addEventListener('mouseleave', function () {
+        };
+        this.boundHideTooltip = function () {
             self.hideTooltip();
-        });
+        };
+
+        this.canvas.addEventListener('mousemove', this.boundHandleMouseMove);
+        this.canvas.addEventListener('mouseleave', this.boundHideTooltip);
     };
 
     RadarChart.prototype.handleMouseMove = function (e) {
@@ -301,12 +304,13 @@
         var center = this.options.center;
         var radius = this.options.radius;
         var angleStep = (2 * Math.PI) / this.data.values.length;
+        var maxValue = this.options.maxValue || 0;
 
-        // Find max value
-        var maxValue = 0;
-        for (var i = 0; i < this.data.values.length; i++) {
-            if (this.data.values[i] > maxValue) {
-                maxValue = this.data.values[i];
+        if (!this.options.maxValue) {
+            for (var i = 0; i < this.data.values.length; i++) {
+                if (this.data.values[i] > maxValue) {
+                    maxValue = this.data.values[i];
+                }
             }
         }
 
@@ -364,6 +368,36 @@
     RadarChart.prototype.updateData = function (newData) {
         this.data = newData;
         this.draw();
+    };
+
+    RadarChart.prototype.destroy = function () {
+        // Remove event listeners
+        if (this.canvas && this.boundHandleMouseMove && this.boundHideTooltip) {
+            this.canvas.removeEventListener('mousemove', this.boundHandleMouseMove);
+            this.canvas.removeEventListener('mouseleave', this.boundHideTooltip);
+        }
+
+        // Clear canvas
+        if (this.ctx && this.canvas) {
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
+
+        // Hide tooltip
+        if (this.tooltip) {
+            this.tooltip.style.display = 'none';
+            this.tooltip.style.visibility = 'hidden';
+            this.tooltip.style.opacity = '0';
+        }
+
+        // Clear references
+        this.canvas = null;
+        this.ctx = null;
+        this.data = null;
+        this.dataPoints = [];
+        this.options = null;
+        this.tooltip = null;
+        this.boundHandleMouseMove = null;
+        this.boundHideTooltip = null;
     };
 
     // Return the constructor
