@@ -19,14 +19,23 @@
     'use strict';
 
     function RadarChart(canvasId, data, options) {
+
         this.canvas = document.getElementById(canvasId);
+
         this.ctx = this.canvas.getContext('2d');
+        if (!this.ctx)
+            return;
+
         this.data = data;
         this.dataPoints = []; // Store data point positions for hover detection
 
         // Get actual canvas dimensions
-        var canvasWidth = this.canvas.width;
-        var canvasHeight = this.canvas.height;
+        var canvasWidth = this.canvas.width || this.canvas.clientWidth || 380;
+        var canvasHeight = this.canvas.height || this.canvas.clientHeight || 380;
+
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
+
         var centerX = canvasWidth / 2;
         var centerY = canvasHeight / 2;
         var maxRadius = Math.min(canvasWidth, canvasHeight) / 2 - 60; // Leave space for labels
@@ -237,11 +246,16 @@
     };
 
     RadarChart.prototype.draw = function () {
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
         this.dataPoints = []; // Reset data points
         this.drawGrid();
+
         this.drawLabels();
+
         this.drawData();
+
     };
 
     RadarChart.prototype.drawGrid = function () {
@@ -301,6 +315,7 @@
     };
 
     RadarChart.prototype.drawData = function () {
+
         var center = this.options.center;
         var radius = this.options.radius;
         var angleStep = (2 * Math.PI) / this.data.values.length;
@@ -337,6 +352,7 @@
         }
 
         // Draw filled area
+
         this.ctx.fillStyle = fillColor;
         this.ctx.beginPath();
 
@@ -356,6 +372,7 @@
         this.ctx.lineWidth = 2;
         this.ctx.stroke();
 
+
         // Draw points
         this.ctx.fillStyle = pointColor;
         for (var i = 0; i < this.dataPoints.length; i++) {
@@ -367,6 +384,14 @@
 
     RadarChart.prototype.updateData = function (newData) {
         this.data = newData;
+
+        // Preserve canvas dimensions before redrawing
+        var canvasWidth = this.canvas.width || this.canvas.clientWidth || 380;
+        var canvasHeight = this.canvas.height || this.canvas.clientHeight || 380;
+
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
+        
         this.draw();
     };
 
