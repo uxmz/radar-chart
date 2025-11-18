@@ -250,6 +250,11 @@
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         this.dataPoints = []; // Reset data points
+
+        // Prevent negative/zero radii that break canvas arc rendering
+        var computedRadius = (this.options && typeof this.options.radius === 'number') ? this.options.radius : 0;
+        this.options.radius = Math.max(10, Math.abs(computedRadius));
+
         this.drawGrid();
 
         this.drawLabels();
@@ -391,7 +396,7 @@
 
         this.canvas.width = canvasWidth;
         this.canvas.height = canvasHeight;
-        
+
         this.draw();
     };
 
